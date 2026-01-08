@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
-use crate::domain::{
+use crate::{domain::{
     repositories::{
         mission_management::MissionManagementRepository, mission_viewing::MissionViewingRepository,
     },
     value_objects::mission_model::{AddMissionModel, EditMissionModel},
-};
+}};
 
 pub struct MissionManagementUseCase<T1, T2>
 where
@@ -33,10 +33,9 @@ where
     }
 
     pub async fn add(&self, chief_id: i32, add_mission_model: AddMissionModel) -> Result<i32> {
-        if add_mission_model.name.trim().is_empty() || add_mission_model.name.trim().len() < 3 {
-            return Err(anyhow::anyhow!(
-                "Mission name MUST BE LEAST '4' CHARACTERS LONG!"
-            ));
+        
+        if add_mission_model.name.trim().is_empty() || add_mission_model.name.trim().len()<3 {
+            return Err(anyhow::anyhow!("Mission name must be at least 3 characters long!"));
         }
 
         let insert_mission_entity = add_mission_model.to_entity(chief_id);
@@ -53,22 +52,18 @@ where
         &self,
         mission_id: i32,
         chief_id: i32,
-       mut edit_mission_model: EditMissionModel,
+        mut edit_mission_model: EditMissionModel,
     ) -> Result<i32> {
 
-        if let Some(name) = edit_mission_model.name{
-            if name.trim().is_empty()  {
+        if let Some(name) = edit_mission_model.name {
+            if name.trim().is_empty() {
                 edit_mission_model.name = None;
-            } else if  name.trim().len() < 3 {
-                return Err(anyhow::anyhow!(
-                "Mission name MUST BE LEAST '4' CHARACTERS LONG!"
-            ));
-                
-            }else {
+            }else if name.trim().len()<3 {
+                return Err(anyhow::anyhow!("Mission name must be at least 3 characters long!"));
+            }else{
                 edit_mission_model.name = Some(name.trim().to_string());
             }
         }
-
 
         let crew_count = self
             .mission_viewing_repository

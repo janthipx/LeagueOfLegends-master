@@ -1,7 +1,9 @@
-use anyhow::Result;
 use std::fmt;
+use anyhow::Result;
+
 #[derive(Debug, Clone, Default, PartialEq)]
-pub enum Stage {
+
+pub enum Stage{
     Local,
     #[default]
     Development,
@@ -10,21 +12,21 @@ pub enum Stage {
 
 impl fmt::Display for Stage {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let stage = match self {
-            Stage::Local => "Local",
-            Stage::Development => "Dev",
-            Stage::Production => "Prod",
+        let stage: &str = match self {
+            Stage::Local => "local",
+            Stage::Development => "development",
+            Stage::Production => "production",
         };
         write!(f, "{}", stage)
     }
 }
 
 impl Stage {
-    pub fn try_form(stage: &str) -> Result<Self> {
+    pub fn from_str(stage: &str) ->Result<Self> {
         match stage {
-            "Local" => Ok(Self::Local),
-            "Dev" => Ok(Self::Development),
-            "Prod" => Ok(Self::Production),
+            "local" => Ok(Self::Local),
+            "development" => Ok(Self::Development),
+            "production" => Ok(Self::Production),
             _ => Err(anyhow::anyhow!("Invalid stage")),
         }
     }

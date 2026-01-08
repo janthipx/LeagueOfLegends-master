@@ -1,0 +1,19 @@
+@base_url=http://127.0.0.1:8000/api
+@menta_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4IiwiZXhwIjoxNzY2OTAwNzU2LCJpYXQiOjE3NjY2NDE1NTZ9.EQZGEezk_BFxoio4xC5yjFxr8Nk8DS3al5Xt3vbDoDQ
+
+
+### join mission
+# @prompt mission_name Mission NAME
+# @prompt mission_id Mission ID
+POST {{base_url}}/crew/join/{{mission_id}}
+Content-Type: application/json
+Authorization: Bearer {{menta_token}}
+
+
+
+
+### leave mission
+# @prompt mission_id Mission ID
+DELETE {{base_url}}/crew/leave/{{mission_id}}
+Content-Type: application/json
+Authorization: Bearer {{menta_token}}

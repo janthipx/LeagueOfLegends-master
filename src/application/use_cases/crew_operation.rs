@@ -1,5 +1,5 @@
 use crate::domain::{
-    entities::crew_memberships::CrewMemberShips,
+    entities::crew_memberships::CrewMembershipEntity,
     repositories::{
         crew_operation::CrewOperationRepository, mission_viewing::MissionViewingRepository,
     },
@@ -36,6 +36,12 @@ where
 
         let mission = self.mission_viewing_repository.get_one(mission_id).await?;
 
+        if mission.chief_id == brawler_id {
+            return Err(anyhow::anyhow!(
+                "Chiefs cannot join their own missions as crew members"
+            ));
+        }
+
         let crew_count = self
             .mission_viewing_repository
             .crew_counting(mission_id)
@@ -52,7 +58,7 @@ where
         }
 
         self.crew_operation_repository
-            .join(CrewMemberShips {
+            .join(CrewMembershipEntity {
                 mission_id,
                 brawler_id,
             })
@@ -70,7 +76,7 @@ where
             return Err(anyhow::anyhow!("Mission is not leavable"));
         }
         self.crew_operation_repository
-            .leave(CrewMemberShips {
+            .leave(CrewMembershipEntity {
                 mission_id,
                 brawler_id,
             })

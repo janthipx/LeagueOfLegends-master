@@ -1,0 +1,57 @@
+@base_url=http://localhost:8000/api
+@menta_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5IiwiZXhwIjoxNzY2OTAxMTkxLCJpYXQiOjE3NjY2NDE5OTF9.69W-unx-ZEB5_XnJJzsInMncBmVIedCA4WApqYwUJE4
+
+
+### create new mission
+# @prompt mission_name Mission Name
+# @prompt description Mission Description
+POST {{base_url}}/mission-management
+Content-Type: application/json
+Authorization: Bearer {{menta_token}}
+
+
+{
+    "name": "{{mission_name}}",
+    "description":"{{description}}"
+}
+
+
+### update mission
+# @prompt mission_id Mission ID
+# @prompt mission_name Mission Name
+# @prompt description Mission Description
+PATCH {{base_url}}/mission-management/{{mission_id}}
+Content-Type: application/json
+Authorization: Bearer {{menta_token}}
+
+
+{
+    "name": "{{mission_name}}",
+    "description": "{{description}}"
+}
+
+
+### remove mission
+# @prompt mission_id Mission ID
+DELETE {{base_url}}/mission-management/{{mission_id}}
+Content-Type: application/json
+Authorization: Bearer {{menta_token}}
+
+
+### set mission in progress
+# @prompt mission_id Mission ID
+PATCH {{base_url}}/mission/in-progress/{{mission_id}}   
+Content-Type: application/json
+Authorization: Bearer {{menta_token}}
+
+### set mission to completed
+# @prompt mission_id Mission ID
+PATCH {{base_url}}/mission/to-completed/{{mission_id}}   
+Content-Type: application/json
+Authorization: Bearer {{menta_token}}
+
+### set mission to failed
+# @prompt mission_id Mission ID
+PATCH {{base_url}}/mission/to-failed/{{mission_id}}   
+Content-Type: application/json
+Authorization: Bearer {{menta_token}}

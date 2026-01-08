@@ -5,7 +5,7 @@ use std::sync::Arc;
 
 use crate::{
     domain::{
-        entities::crew_memberships::CrewMemberShips,
+        entities::crew_memberships::CrewMembershipEntity,
         repositories::crew_operation::CrewOperationRepository,
     },
     infrastructure::database::{postgresql_connection::PgPoolSquad, schema::crew_memberships},
@@ -23,7 +23,7 @@ impl CrewOperationPostgres {
 
 #[async_trait]
 impl CrewOperationRepository for CrewOperationPostgres {
-    async fn join(&self, crew_member_ships: CrewMemberShips) -> Result<()> {
+    async fn join(&self, crew_member_ships: CrewMembershipEntity) -> Result<()> {
         let mut conn = Arc::clone(&self.db_pool).get()?;
         insert_into(crew_memberships::table)
             .values(crew_member_ships)
@@ -31,7 +31,7 @@ impl CrewOperationRepository for CrewOperationPostgres {
         Ok(())
     }
 
-    async fn leave(&self, crew_member_ships: CrewMemberShips) -> Result<()> {
+    async fn leave(&self, crew_member_ships: CrewMembershipEntity) -> Result<()> {
         let mut conn = Arc::clone(&self.db_pool).get()?;
         delete(crew_memberships::table)
             .filter(crew_memberships::brawler_id.eq(crew_member_ships.brawler_id))

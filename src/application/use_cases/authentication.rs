@@ -1,54 +1,40 @@
-use std::sync::Arc;
 
+use std::{ sync::Arc};
 use anyhow::Result;
-use chrono::{Duration, Utc};
 
-use crate::{
-    config::config_loader::get_user_secret,
-    domain::repositories::brawlers::BrawlerRepository,
-    infrastructure::{
-        argon2,
-        jwt::{
-            authentication_model::LoginModel,
-            generate_token,
-            jwt_model::{Claims, Passport},
-        },
-    },
-};
+use crate::{domain::repositories::brawlers::BrawlerRepository, infrastructure::{self, jwt::{authentication_model::LoginModel, jwt_model::Passport}}};
+
 pub struct AuthenticationUseCase<T>
 where
-    T: BrawlerRepository + Send + Sync,
-{
+    T: BrawlerRepository + Send + Sync {
     brawler_repository: Arc<T>,
 }
-impl<T> AuthenticationUseCase<T>
-where
-    T: BrawlerRepository + Sync + Send,
-{
-    pub fn new(brawler_repository: Arc<T>) -> Self {
-        Self { brawler_repository }
-    }
 
-    pub async fn login(&self, login_model: LoginModel) -> Result<Passport> {
-        let secret = get_user_secret()?;
-        let username = login_model.username.clone();
 
-        //find this user in database
-        let user = self.brawler_repository.find_by_username(username).await?;
-        let hashed_password = user.password;
+impl <T> AuthenticationUseCase<T> 
+    where
+        T: BrawlerRepository + Send + Sync,
+    {
+        pub fn new(brawler_repository: Arc<T>) -> Self {
+            Self { brawler_repository }
 
-        if !argon2::verify(login_model.password, hashed_password)? {
-            return Err(anyhow::anyhow!("Invalid Password !!"));
         }
+        pub async fn login(&self, login_model: LoginModel) -> Result<Passport> {
+    let username = login_model.username.clone();
 
-        let claims = Claims {
-            sub: user.id.to_string(),
-            exp: (Utc::now() + Duration::days(3)).timestamp() as usize,
-            iat: Utc::now().timestamp() as usize,
-        };
+    let brawler_entity = self.brawler_repository.find_by_username(&username).await?;
+    let hash_password = brawler_entity.password;
+    let login_password = login_model.password;
 
-        let token = generate_token(secret, &claims)?;
-
-        Ok(Passport { token })
+    if !infrastructure::argon2::verify(login_password, hash_password)? {
+        return Err(anyhow::anyhow!("Invalid password!"));
     }
+
+    let passport = Passport::new(brawler_entity.id)?;
+
+    Ok(passport)
 }
+
+
+    
+    }
