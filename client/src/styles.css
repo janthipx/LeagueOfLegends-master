@@ -1,0 +1,8 @@
+/* You can add global styles to this file, and also import other style filesboth from node_modules and your own src/styles directory */
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    height: 100vh;
+    
+}
