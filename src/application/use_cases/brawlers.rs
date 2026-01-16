@@ -30,18 +30,18 @@ where
         Self { brawler_repository }
     }
 
-    pub async fn register(&self, mut register_model: RegisterBrawlerModel) -> Result<Passport> {
-        let hashed_password = hash(register_model.password.clone())?;
+   pub async fn register(&self, mut register_model: RegisterBrawlerModel) -> Result<Passport> {
+    let hashed_password = hash(register_model.password.clone())?;
+    register_model.password = hashed_password;
 
-        register_model.password = hashed_password;
+    // เก็บชื่อไว้ก่อนจะย้าย register_model ไปเป็น entity
+    let display_name = register_model.display_name.clone(); 
 
-        let register_entity = register_model.to_entity();
-
-        let brawler_id = self.brawler_repository.register(register_entity).await?;
-
-        let passport = Passport::new(brawler_id)?;
-        Ok(passport)
-    }
+    let register_entity = register_model.to_entity();
+    let brawler_id = self.brawler_repository.register(register_entity).await?;
+    let passport = Passport::new(brawler_id, display_name, None);
+    passport
+}
     pub async fn upload_avatar(
         &self,
         base64_image: String,

@@ -1,6 +1,20 @@
-  <mat-toolbar>
-    <span>My Application</span>
-    <span class="spacer"></span>
-    <button mat-button >Login</button>
- </mat-toolbar>
- 
+<mat-toolbar class="my-navbar">
+  <span class="home-btn" routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+    LoL
+  </span>
+  <span style="margin-left: 10px;">My Application</span>
+  
+  <span class="spacer"></span>
+
+  @if (display_name()) {
+    <button mat-button [matMenuTriggerFor]="menu">
+      <img [src]="avatar_url()" alt="user avatar" class="avatar">
+      {{ display_name() }}
+    </button>
+    
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item routerLink="/profile">Profile</button>
+      <button mat-menu-item (click)="logout()">Log-out</button>
+    </mat-menu>
+  }
+</mat-toolbar>

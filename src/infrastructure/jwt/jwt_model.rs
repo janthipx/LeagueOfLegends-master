@@ -10,6 +10,8 @@ pub struct Passport {
     pub access_token: String,
     pub(crate) token_type: String,
     pub(crate) expires_in: usize,
+    pub display_name: String,
+    pub avatar_url: String,
     // pub expires_in: usize,
     // pub(crate) refresh_token: String,
 }
@@ -22,7 +24,7 @@ pub struct Claims {
 }
 
 impl Passport {
-    pub fn new(brawler_id: i32) -> Result<Self> {
+    pub fn new(brawler_id: i32, display_name: String, avatar_url: Option<String>) -> Result<Self> {
         let jwt_env = get_jwt_env()?;
         let token_type = "Bearer".to_string();
         let expires_in = (Utc::now() + Duration::days(jwt_env.lift_time_days)).timestamp() as usize;
@@ -38,6 +40,8 @@ impl Passport {
             token_type,
             access_token,
             expires_in,
+            display_name,
+            avatar_url: avatar_url.unwrap_or_default(),
         })
     }
 }

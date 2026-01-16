@@ -23,6 +23,7 @@ pub struct JwtEnv {
     //pub struct UserSecret {
     pub secret: String,
     pub lift_time_days: i64,
+    pub(crate) life_time_days: i64,
 }
 
 #[derive(Debug, Clone)]

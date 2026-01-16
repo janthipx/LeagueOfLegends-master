@@ -1,5 +1,4 @@
 use std::{net::SocketAddr, sync::Arc, time::Duration};
-
 use anyhow::Result;
 use axum::{
     Router, http::{
@@ -17,6 +16,7 @@ use tower_http::{
     trace::TraceLayer,
 };
 use tracing::info;
+
 
 use crate::{
     config::config_model::DotEnvyConfig, infrastructure::{database::postgresql_connection::PgPoolSquad, http::routers::{self}}
@@ -38,6 +38,7 @@ fn api_serve(db_pool: Arc<PgPoolSquad>) -> Router {
         .nest("/crew", routers::craw_operations::routes(Arc::clone(&db_pool)))
         .nest("/mission", routers::missions_operations::routes(Arc::clone(&db_pool)))
         .nest("/view", routers::missions_viewing::routes(Arc::clone(&db_pool)))
+        //.nest("/units", routers::units::routes(Arc::clone(&db_pool)))
     .fallback(|| async { (StatusCode::NOT_FOUND, "API not found") })
 
 }
@@ -47,8 +48,7 @@ pub async fn start(config: Arc<DotEnvyConfig>, db_pool: Arc<PgPoolSquad>) -> Res
         .merge(static_serve())
         .nest("/api", api_serve(db_pool))
         .route("/health_check", get(routers::default_routers::health_check))
-        // .fallback(default_router::health_check)
-        // .route("/health_check", get(default_router::health_check)
+        // .route("/make_error", get(routers::default_routers::make_error))
         .layer(TimeoutLayer::new(Duration::from_secs(
             config.server.timeout,
         )))
